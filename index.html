@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<body style="background:black;">
+
+<!-- SVG canvas -->
+<svg id="art" width="900" height="1200" style="display:inline-block;"></svg>
+
+<script>
+
+//grab the SVG element so we can draw inside it
+const svg = document.getElementById("art");
+
+
+//grid size 
+const cols = 12;
+const rows = 22;
+
+
+//size of each tile
+const tileSize = 50;
+
+//draws each square across then goes to the next row 
+//loop through rows
+for(let row = 0; row < rows; row++){
+    //loop through columns
+    for(let col = 0; col < cols; col++){
+        /*
+        chaos value scales randomness based on the row number
+
+        top rows = chaos near 0 (more order)
+        bottom rows = chaos near 1 (more disorder)
+
+        calculates where we are from the total rows to see when we 
+        should start the chaos 
+        */
+        let chaos = row / rows;
+
+
+        //control how far fragments can move
+        //more chaotic at the bottom the more higher the number  
+        let maxOffset = chaos * 50;
+
+        //control how much fragments rotate
+        //more rotation as we increase the number 
+        let maxRotate = chaos * 35;
+
+
+        /*
+        tile container 
+
+        the g is one tile and inside the g is the 4 squares to make the tile
+        when we move the <g> everything inside moves together
+
+        the link shows that we are using SVG so it knows what a g tag and t
+        the rect we define below is
+        */
+        let tile = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "g"
+        );
+
+
+        /*
+        move the current tile (the 4 squares) into grid position with translate 
+        and we translate x and y so they are not at the edges of the screen
+        the x moves it horiztonally and the y moves it vertically after we add 
+        */
+        tile.setAttribute(
+            "transform",
+            `translate(${col * tileSize + 80}, ${row * tileSize + 30})`
+        );
+
+
+        /*
+        create the structure 
+
+        each tile is made from 4 smaller squares
+
+        so then we can break them apart towards the bottom
+        */
+        for(let i = 0; i < 4; i++){
+
+            let rect = document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "rect"
+            );
+
+
+            /*
+            Base positions form a perfect square:
+
+            does it four times because of the loop
+
+            0 1
+            2 3 this is the squares structure 
+            */
+            let baseX = (i % 2) * 18;
+            let baseY = Math.floor(i / 2) * 18;
+
+
+            /*
+            RANDOM OFFSETS
+
+            Math.random() returns 0 to 1
+
+            when we subtract 0.5 we get 
+            -0.5 to +0.5
+
+            This lets fragments move in all directions
+            instead of only being positive and moving right and down and
+            never up and left 
+            */
+            let offsetX = (Math.random() - 0.5) * maxOffset;
+            let offsetY = (Math.random() - 0.5) * maxOffset;
+
+
+            //slight rotation adds to the fracture feeling
+            let rotate = (Math.random() - 0.5) * maxRotate;
+
+
+            //size of squares 
+            rect.setAttribute("width", 18);
+            rect.setAttribute("height", 18);
+
+
+            /*
+            color progression
+
+            tiles fade from black to gray as there is more chaos 
+
+            used to show a weakening structure 
+            */
+            let shade = Math.floor(20 + chaos * 200);
+
+            //add a stroke to the rectangles in slight transparent white
+            //with a stroke width
+            rect.setAttribute("stroke", "rgba(255,255,255,0.6)");     
+            rect.setAttribute("stroke-width", 1);      
+
+
+            //fill the small square with these colors 
+            //based on the chaos we will get RGB values to fill
+            //each small rectangle with to make the tile 
+            let r = Math.floor(58 + chaos * (252 - 58));   
+            let g = Math.floor(123 + chaos * (74 - 123));  
+            let b = Math.floor(213 + chaos * (26 - 213)); 
+            rect.setAttribute("fill", `rgb(${r},${g},${b})`);
+
+
+            /*
+            apply transforms directly to each small square 
+
+            1. move into the square position based on the number square
+            2. add noise offset
+            3. rotate
+            */
+            rect.setAttribute(
+                "transform",
+                `
+                translate(${baseX + offsetX}, ${baseY + offsetY})
+                rotate(${rotate})
+                `
+            );
+
+
+            //put small square inside the tile container to make one whole square 
+            tile.appendChild(rect);
+        }
+
+
+        //add tile to SVG canvas
+        svg.appendChild(tile);
+    }
+}
+
+</script>
+</body>
+</html>
