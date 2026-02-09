@@ -80,9 +80,9 @@ for(let row = 0; row < rows; row++){
         */
         for(let i = 0; i < 4; i++){
 
-            let rect = document.createElementNS(
+            let triangle = document.createElementNS(
                 "http://www.w3.org/2000/svg",
-                "rect"
+                "polygon"
             );
 
 
@@ -118,9 +118,8 @@ for(let row = 0; row < rows; row++){
             let rotate = (Math.random() - 0.5) * maxRotate;
 
 
-            //size of squares 
-            rect.setAttribute("width", 18);
-            rect.setAttribute("height", 18);
+            //size of triangles 
+            triangle.setAttribute("points", "0,18 9,0 18,18");
 
 
             /*
@@ -134,8 +133,8 @@ for(let row = 0; row < rows; row++){
 
             //add a stroke to the rectangles in slight transparent white
             //with a stroke width
-            rect.setAttribute("stroke", "rgba(255,255,255,0.6)");     
-            rect.setAttribute("stroke-width", 1);      
+            triangle.setAttribute("stroke", "rgba(255,255,255,0.6)");     
+            triangle.setAttribute("stroke-width", 1);      
 
 
             //fill the small square with these colors 
@@ -144,7 +143,7 @@ for(let row = 0; row < rows; row++){
             let r = Math.floor(58 + chaos * (252 - 58));   
             let g = Math.floor(123 + chaos * (74 - 123));  
             let b = Math.floor(213 + chaos * (26 - 213)); 
-            rect.setAttribute("fill", `rgb(${r},${g},${b})`);
+            triangle.setAttribute("fill", `rgb(${r},${g},${b})`);
 
 
             /*
@@ -154,7 +153,7 @@ for(let row = 0; row < rows; row++){
             2. add noise offset
             3. rotate
             */
-            rect.setAttribute(
+            triangle.setAttribute(
                 "transform",
                 `
                 translate(${baseX + offsetX}, ${baseY + offsetY})
@@ -164,7 +163,7 @@ for(let row = 0; row < rows; row++){
 
 
             //put small square inside the tile container to make one whole square 
-            tile.appendChild(rect);
+            tile.appendChild(triangle);
         }
 
 
